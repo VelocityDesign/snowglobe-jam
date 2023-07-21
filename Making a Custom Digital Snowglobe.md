@@ -1,4 +1,4 @@
----  
+---
 title: 'Making a Custom Digital Snowglobe'  
 description: >  
   This Jam leads participants through a journey of creating their very own custom digital snowglobe that can even react to device motion!
@@ -15,16 +15,24 @@ notes: 'https://example.com/to_be_added/'
 poster: 'https://example.com/to_be_added/'
 video: 'https://example.com/to_be_added/'
 slug: 'custom-snowglobe'
-
 ---
 
 # Introduction
-![[Pasted image 20230719001827.png]]
+Winter is objectively the best season of the year. Hot cocoa, pine trees, family tradition, sledding, and, most importantly, snow, are all favourites from this cozy season. However, winter doesn't last forever, and snow melts, much to the dismay of every five-year-old with a snowman. But, we humans have made a solution... snowglobes!
+
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/6snow_doge.png)]
+
+So much snow in a small sphere?!? What much more could a person want?
+
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/7power_graph.png)
 > It's scientifically proven!
 
-![[Pasted image 20230719002142.png]]
+So, how would you like to create your own, virtual, shareable snowglobe? (I guess you don't have a choice at this point because, spoiler alert, you are doing that right about now...)
 
 # The Basics
+
+> If you'd like to skip ahead to the fun part, or if you're short on time, you can use [this template on replit to get started!](https://replit.com/@VelocityDev/snowglobe-template) Just hit the "use template" button at the top of the page and skip ahead to the "Make it look Fabulous" section (note: the particles.json file is already in place.) This template comes with the 'Make it Installable' customization already added as well.
+
 ## Setting the Page Up
 Every good project starts with a plan! Here, we'll link to some essential libraries and lay out the page. We'll be using basic HTML, intermediate CSS, and more advanced JavaScript, but it's really easy to figure out!
 
@@ -194,14 +202,50 @@ Finally, we'll add the function to handle shaking activation!
 ```
 
 ### ↕ Choices, choices
+Now, time to tie it all together! tsParticles can load particle configuration in a number of ways, but one of the easiest is to load it from a `.json` file. Go ahead and download [this default snow configuration](https://cloud-66d7j3kh5-hack-club-bot.vercel.app/0particles.json) and place it in your website root as `particles.json`. You can customize these values later.
 
-> TODO: Add code to load particles.json
+Under the `calculateAcceleration()` function, add the command `tsParticles.load()`, which allows us to load the configuration. This command takes two inputs, element ID and configuration. Our element ID is the ID of the element where we want the particles to appear, and our configuration is the path to our config file, `particles.json`.
+
+```js
+tsParticles.loadJSON('particles', 'particles.json')
+```
+
+Next, we'll add a callback function. Inside we'll select the particles container and immediately pause the particles until they're shaken. Then, we'll add an event listener that calls the `shakeItUp()` function whenever the snowglobe is clicked/touched. Finally, we'll add an event listener to the `window` element (provided by default) that detects gyroscope shifts and calculates its magnitude. Finally, it will compare this magnitude to a threshold (in testing, values between 17-23 seemed to work best) which can be adjusted if needed.  If this comparison passes, then it will call `shakeItUp()`. This is a lot at once, so take a look at the code below.
+
+```js
+    tsParticles.loadJSON('particles', 'particles.json')
+      .then(function () {
+        // Select the particle container and pause the particles
+        particles = tsParticles.domItem(0);
+        particles.pause()
+
+        // Add globe event listener
+        globe.addEventListener('click', () => {
+          shakeItUp()
+        });
+
+        // Add gyro event listener
+        window.addEventListener("devicemotion", (event) => {
+          // Calculate the magnitude every time
+          const acceleration = calculateAcceleration(event);
+
+          // Compare the magnitude to threshold.
+          if (acceleration > 23) {
+            shakeItUp()
+          }
+        });
+      });
+```
+
+And, that's all!
+
+> [For more information on what event listeners are and how they work, check out this article!](https://www.computerhope.com/jargon/e/event-listener.html/)
 
 # Customization
 At this point, you have a nice, amazing snowglobe. Congratulations 🎉
 However, it's looking like all of these snowglobes are the same...
 
-![[Pasted image 20230719001139.png]]
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/8identical_snowglobes.png)
 
 Let's fix that by spicing them up a bit!
 
@@ -210,7 +254,7 @@ Let's fix that by spicing them up a bit!
 ### Adding an Image
 Adding an image is super simple! If you don't have an image you'd like to use already, you can find one on a free service like [Unsplash!](https://unsplash.com/) 
 
-![[Pasted image 20230720185932.png]]
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/3mountains.png)
 > For example, this one.
 
 Download the image and add it to the website folder (Err- upload it to your repl!) For simplicity, let's rename the file to `background.jpg` (or `.png`, etc.) Now, go into the CSS for the `#snowglobe` element. Let's change up that background...
@@ -223,13 +267,13 @@ Download the image and add it to the website folder (Err- upload it to your repl
 
 Now, if you want to change up the position of the image within the globe, just change `center` in `center/cover`  to another location such as `right`, `top`, or `bottom`.
 
-![[Pasted image 20230720185901.png]]
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/4picture_globe.png)
 > Hurrah, cool mountains!
 
 ### Adding a Gradient
 To keep it simple, you can use a tool like [cssgradient.io](https://cssgradient.io/) to generate a cool gradient background. Once you're done, all you need to do is copy the part that starts with `linear-gradient`.
 
-![[Pasted image 20230720191610.png]]
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/2gradient_highlighted.png)
 > Just the highlighted part!
 
 Next, go into the CSS for the `#snowglobe` element. Let's change up that background...
@@ -241,13 +285,58 @@ Next, go into the CSS for the `#snowglobe` element. Let's change up that backgro
 }
 ```
 
-![[Pasted image 20230720184839.png]]
+![https://cloud-fcssxnb6l-hack-club-bot.vercel.app/](https://cloud-fcssxnb6l-hack-club-bot.vercel.app/5gradient_globe.png)
 > A cool sunset made with the gradient `linear-gradient(4deg, rgba(134, 100, 0, 1) 0%, rgba(121, 9, 9, 1) 32%, rgba(4, 0, 70, 1) 100%)`
 
 If you want an extra cool challenge, try animating it! See [the section on animation above](#### Bonus: A shake animation!) and try to figure it out for yourself!
 
-> If you'd like to learn more about CSS Gradients, you can read this article from MDN!
+> [If you'd like to learn more about CSS Gradients, you can read this article from MDN!](https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/linear-gradient)
 
 ## It's raining, It's pouring! (Change what's falling)
+To change what's falling, we'll need to go into the `particles.json` file. Here, we can change animation, color, or even shape!
+
+### Change the Color
+Changing the color is super easy! Just locate the `colors` object within `particles`. If you're using the default configuration, it should be near line 30. Change the `value` within this to whatever color you want and then you'll be good to go!
+
+### Change the Shape to a new Shape
+By default, tsParticles allows you to use one of three different shapes: `square`, `circle`, and `triangle`. To change this, simply locate the `particles.shape` object within `particles.json`. If you're using the default config, this is located near line 129. Within this object, change the `type` to the shape you want. Ta-da! Now you have a new shape!
+
+### Make More Stuff Fall
+tsParticles allows you to adjust a `number` value to make more or less particles fall. It uses a density calculator to scale this value up or down, too. This value in the default config is located near line 106, under the `particles.number` object. Change the `value` to whichever value you'd like.
+
 
 ## Twinkle, Twinkle (Add some music)
+First find some music! Legally, you should use some audio to which you have rights. [Check the internet archive for something to use!](https://archive.org/) 
+
+Anyway, you'll want to download that audio and add it to the website directory (or upload it to your repl.) For simplicity, rename the file to `audio`. Under the `snowglobe` div, go ahead and add a new `audio` element with a single `source` child.
+
+```html
+<audio>
+	<!-- replace the src and type with your respective file extentions -->
+	<source src="audio.ogg" type="audio/ogg"></source>
+</audio>
+```
+
+Now, select the audio element. Then, add the line `audio.play();` into the `shakeItUp()` function. Congratulations, now you have music!
+
+## It's an App! (Making it a PWA)
+At this point, you have a cool snowglobe that's custom to you. Now, you can make it installable. To start, download [these assets](https://cloud-osijhtm8u-hack-club-bot.vercel.app/0pwa.zip) and unzip them into the root of your project. If you want, you can generate these assets with a custom icon and color scheme using a tool like [Real Favicon Generator](https://realfavicongenerator.net/), my personal favourite. Now, add the following HTML to the end of your head:
+
+```html
+  <!-- PWA Stuff -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3063ac">
+  <meta name="apple-mobile-web-app-title" content="Snowglobe">
+  <meta name="application-name" content="Snowglobe">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="theme-color" content="#2e2e2e">
+```
+
+> Note: If you're using a custom pack, follow the instructions that they give instead.
+
+Now, if all has gone well, you should be able to install the website as a PWA! Congratulations! If you need help with this, [check out this article.](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing)
+
+That's all, folks!
